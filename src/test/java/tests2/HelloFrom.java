@@ -1,3 +1,5 @@
+package tests2;
+
 public class HelloFrom {
 
     public static void main(String[] args) {

@@ -1,3 +1,5 @@
+package tests2;
+
 import io.restassured.RestAssured;
 import io.restassured.http.Cookie;
 import io.restassured.response.Response;
