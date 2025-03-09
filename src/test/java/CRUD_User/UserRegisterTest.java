@@ -18,7 +18,7 @@ public class UserRegisterTest extends BaseTestCase {
     private final ApiCoreRequests apiCoreRequests = new ApiCoreRequests();
 
     @Test
-    public void testCreateUserWithExistingEmail() {
+    public void testCreateUserWithIncorrectEmail() {
         Map<String, String> userData = new HashMap<>();
         userData.put("email", "vinkotovexample.com");
         userData.put("password", "123");
