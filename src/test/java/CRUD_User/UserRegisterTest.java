@@ -1,9 +1,12 @@
 package CRUD_User;
 
+import io.qameta.allure.Description;
+import io.qameta.allure.Feature;
 import io.restassured.response.Response;
 import lib.ApiCoreRequests;
 import lib.Assertions;
 import lib.BaseTestCase;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
@@ -13,11 +16,16 @@ import java.util.Map;
 
 import static lib.DataGenerator.getRandomName;
 
+@Feature("Create New User")
 public class UserRegisterTest extends BaseTestCase {
 
+    String url = "https://playground.learnqa.ru/api/";
+    String url2 = "https://playground.learnqa.ru/api_dev/";
     private final ApiCoreRequests apiCoreRequests = new ApiCoreRequests();
 
     @Test
+    @Description("This test verifies that a user can't create a new account with an incorrectly filled email")
+    @Tag("Regression")
     public void testCreateUserWithIncorrectEmail() {
         Map<String, String> userData = new HashMap<>();
         userData.put("email", "vinkotovexample.com");
@@ -27,7 +35,7 @@ public class UserRegisterTest extends BaseTestCase {
         userData.put("lastName", "learnqa");
 
         Response responseCreateAuth = apiCoreRequests
-                .makePostRequest("https://playground.learnqa.ru/api/user/", userData);
+                .makePostRequest(url + "user/", userData);
 
         System.out.println(responseCreateAuth.asString());
         System.out.println(responseCreateAuth.statusCode());
@@ -38,6 +46,8 @@ public class UserRegisterTest extends BaseTestCase {
 
     @ParameterizedTest
     @ValueSource(strings = {"email", "password", "username", "firstName", "lastName"})
+    @Description("This test verifies that a user can't create a new account if at least one field is empty")
+    @Tag("Smoke")
     public void testCreateUserWithMissedOneParameter(String condition) {
         Map<String, String> userData = new HashMap<>();
         if (condition.equals("email")) {
@@ -46,7 +56,7 @@ public class UserRegisterTest extends BaseTestCase {
             userData.put("firstName", "learnqa");
             userData.put("lastName", "learnqa");
             Response responseForCheck = apiCoreRequests.makePostRequest(
-                    "https://playground.learnqa.ru/api/user/",
+                    url + "user/",
                     userData);
             Assertions.assertResponseTextEquals(responseForCheck, "The following required params are missed: email");
             Assertions.assertResponseCodeEquals(responseForCheck, 400);
@@ -56,7 +66,7 @@ public class UserRegisterTest extends BaseTestCase {
             userData.put("firstName", "learnqa");
             userData.put("lastName", "learnqa");
             Response responseForCheck = apiCoreRequests.makePostRequest(
-                    "https://playground.learnqa.ru/api/user/",
+                    url + "user/",
                     userData);
             Assertions.assertResponseCodeEquals(responseForCheck, 400);
             Assertions.assertResponseTextEquals(responseForCheck, "The following required params are missed: password");
@@ -66,7 +76,7 @@ public class UserRegisterTest extends BaseTestCase {
             userData.put("firstName", "learnqa");
             userData.put("lastName", "learnqa");
             Response responseForCheck = apiCoreRequests.makePostRequest(
-                    "https://playground.learnqa.ru/api/user/",
+                    url+ "user/",
                     userData);
             Assertions.assertResponseCodeEquals(responseForCheck, 400);
             Assertions.assertResponseTextEquals(responseForCheck, "The following required params are missed: username");
@@ -76,7 +86,7 @@ public class UserRegisterTest extends BaseTestCase {
             userData.put("username", "learnqa");
             userData.put("lastName", "learnqa");
             Response responseForCheck = apiCoreRequests.makePostRequest(
-                    "https://playground.learnqa.ru/api/user/",
+                    url+ "user/",
                     userData);
             Assertions.assertResponseCodeEquals(responseForCheck, 400);
             Assertions.assertResponseTextEquals(responseForCheck, "The following required params are missed: firstName");
@@ -86,7 +96,7 @@ public class UserRegisterTest extends BaseTestCase {
             userData.put("username", "learnqa");
             userData.put("firstName", "learnqa");
             Response responseForCheck = apiCoreRequests.makePostRequest(
-                    "https://playground.learnqa.ru/api/user/",
+                    url +"user/",
                     userData);
             Assertions.assertResponseCodeEquals(responseForCheck, 400);
             Assertions.assertResponseTextEquals(responseForCheck, "The following required params are missed: lastName");
@@ -96,6 +106,7 @@ public class UserRegisterTest extends BaseTestCase {
     }
 
     @Test
+    @Description("This test verifies that it’s impossible to create a new account with a username that is only one symbol long")
     public void testCreateUserWithShortName() {
         Map<String, String> userData = new HashMap<>();
         userData.put("email", "Ivanov@example.com");
@@ -105,7 +116,7 @@ public class UserRegisterTest extends BaseTestCase {
         userData.put("lastName", "learnqa");
 
         Response responseCreateAuth = apiCoreRequests
-                .makePostRequest("https://playground.learnqa.ru/api/user/", userData);
+                .makePostRequest(url + "user/", userData);
 
         System.out.println(responseCreateAuth.asString());
         System.out.println(responseCreateAuth.statusCode());
@@ -115,6 +126,7 @@ public class UserRegisterTest extends BaseTestCase {
     }
 
     @Test
+    @Description("This test verifies that it’s impossible to create a new account with a username that is more than 250 characters long")
     public void testCreateUserWithLongName() {
         Map<String, String> userData = new HashMap<>();
         userData.put("email", "Ivanov@example.com");
@@ -124,7 +136,7 @@ public class UserRegisterTest extends BaseTestCase {
         userData.put("lastName", "learnqa");
 
         Response responseCreateAuth = apiCoreRequests
-                .makePostRequest("https://playground.learnqa.ru/api/user/", userData);
+                .makePostRequest(url + "user/", userData);
 
         System.out.println(responseCreateAuth.asString());
         System.out.println(responseCreateAuth.statusCode());

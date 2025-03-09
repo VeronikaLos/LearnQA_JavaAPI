@@ -1,5 +1,6 @@
 package CRUD_User;
 
+import io.qameta.allure.Feature;
 import io.restassured.path.json.JsonPath;
 import io.restassured.response.Response;
 import lib.ApiCoreRequests;
@@ -11,11 +12,14 @@ import org.junit.jupiter.api.Test;
 import java.util.HashMap;
 import java.util.Map;
 
+@Feature("Edit User")
 public class UserEditTest extends BaseTestCase {
 
     String cookie;
     String header;
     private final ApiCoreRequests apiCoreRequests = new ApiCoreRequests();
+    String url = "https://playground.learnqa.ru/api/";
+    String url2 = "https://playground.learnqa.ru/api_dev/";
 
     String newName = "Changed Name";
     Map<String, String> editData = new HashMap<>();
@@ -26,7 +30,7 @@ public class UserEditTest extends BaseTestCase {
         editData.put("firstName", newName);
         // edit
         Response responseEditUser = apiCoreRequests
-                .makePutRequestWithoutAuth("https://playground.learnqa.ru/api/user/2", editData);
+                .makePutRequestWithoutAuth(url + "user/2", editData);
 
         Assertions.assertResponseCodeEquals(responseEditUser, 400);
         Assertions.assertJsonByName(responseEditUser, "error", "Auth token not supplied");
@@ -40,7 +44,7 @@ public class UserEditTest extends BaseTestCase {
         authData.put("password", "1234");
 
         Response responseGetAuth = apiCoreRequests
-                .makePostRequest("https://playground.learnqa.ru/api/user/login", authData);
+                .makePostRequest(url + "user/login", authData);
 
         // вынимаем из ответа Header и Cookie
         header = this.getHeader(responseGetAuth, "x-csrf-token");
@@ -49,7 +53,7 @@ public class UserEditTest extends BaseTestCase {
         // Edit user 4
         editData.put("firstName", newName);
         Response responseEditUser = apiCoreRequests
-                .makePutRequest("https://playground.learnqa.ru/api/user/4", editData, header, cookie);
+                .makePutRequest(url + "user/4", editData, header, cookie);
 
         Assertions.assertResponseCodeEquals(responseEditUser, 400);
         Assertions.assertJsonByName(responseEditUser, "error", "Please, do not edit test users with ID 1, 2, 3, 4 or 5.");
@@ -60,7 +64,7 @@ public class UserEditTest extends BaseTestCase {
         // GENERATE USER
         Map<String, String> userData = DataGenerator.getRegistrationData();
         JsonPath responseCreateAuth = apiCoreRequests
-                .makePostRequestJson("https://playground.learnqa.ru/api/user/", userData);
+                .makePostRequestJson(url + "user/", userData);
         String userId = responseCreateAuth.getString("id");
 
         // LOGIN
@@ -69,7 +73,7 @@ public class UserEditTest extends BaseTestCase {
         authData.put("password", userData.get("password"));
 
         Response responseGetAuth = apiCoreRequests
-                .makePostRequest("https://playground.learnqa.ru/api/user/login", authData);
+                .makePostRequest(url + "user/login", authData);
 
         // вынимаем из ответа Header и Cookie
         header = this.getHeader(responseGetAuth, "x-csrf-token");
@@ -78,7 +82,7 @@ public class UserEditTest extends BaseTestCase {
         // EDIT
         editData.put("email", "vinkotovexample.com");
         Response responseEditUser = apiCoreRequests
-                .makePutRequest("https://playground.learnqa.ru/api/user/" + userId, editData, header, cookie);
+                .makePutRequest(url + "user/" + userId, editData, header, cookie);
 
         Assertions.assertResponseCodeEquals(responseEditUser, 400);
         Assertions.assertJsonByName(responseEditUser, "error", "Invalid email format");
@@ -89,7 +93,7 @@ public class UserEditTest extends BaseTestCase {
         // GENERATE USER
         Map<String, String> userData = DataGenerator.getRegistrationData();
         JsonPath responseCreateAuth = apiCoreRequests
-                .makePostRequestJson("https://playground.learnqa.ru/api/user/", userData);
+                .makePostRequestJson(url + "user/", userData);
         String userId = responseCreateAuth.getString("id");
 
         // LOGIN
@@ -98,7 +102,7 @@ public class UserEditTest extends BaseTestCase {
         authData.put("password", userData.get("password"));
 
         Response responseGetAuth = apiCoreRequests
-                .makePostRequest("https://playground.learnqa.ru/api/user/login", authData);
+                .makePostRequest(url + "user/login", authData);
 
         // вынимаем из ответа Header и Cookie
         header = this.getHeader(responseGetAuth, "x-csrf-token");
@@ -107,7 +111,7 @@ public class UserEditTest extends BaseTestCase {
         // EDIT
         editData.put("firstName", "a");
         Response responseEditUser = apiCoreRequests
-                .makePutRequest("https://playground.learnqa.ru/api/user/" + userId, editData, header, cookie);
+                .makePutRequest(url + "user/" + userId, editData, header, cookie);
 
         Assertions.assertResponseCodeEquals(responseEditUser, 400);
         Assertions.assertJsonByName(responseEditUser, "error", "The value for field `firstName` is too short");
